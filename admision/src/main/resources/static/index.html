@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital San Marcos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --hosp-primary: #0f4c81;
+            --hosp-secondary: #2a6f97;
+            --hosp-accent: #00a896;
+            --hosp-bg: #f4f7f9;
+            --hosp-card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--hosp-bg);
+            color: #333;
+        }
+
+        /* Navbar estilo hospitalario */
+        .hospital-navbar {
+            background: linear-gradient(135deg, #0f4c81 0%, #1b4965 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .hospital-brand {
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Tarjetas de Métricas Rápidas */
+        .stat-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        /* Nav Tabs personalizadas */
+        .nav-pills-custom .nav-link {
+            color: #555;
+            font-weight: 500;
+            border-radius: 10px;
+            padding: 10px 18px;
+            margin-right: 6px;
+            background-color: #e9ecef;
+            transition: all 0.25s ease;
+        }
+        .nav-pills-custom .nav-link:hover {
+            background-color: #dee2e6;
+            color: var(--hosp-primary);
+        }
+        .nav-pills-custom .nav-link.active {
+            background-color: var(--hosp-primary) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 10px rgba(15, 76, 129, 0.3);
+        }
+
+        /* Formularios y Tarjetas */
+        .main-card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .card-header-custom {
+            background-color: transparent;
+            border-bottom: 2px solid #f0f3f6;
+            padding: 18px 24px;
+        }
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--hosp-secondary);
+            box-shadow: 0 0 0 0.25rem rgba(42, 111, 151, 0.15);
+        }
+
+        /* Badges de Triaje */
+        .badge-priority-1 {
+            background-color: #dc3545;
+            color: white;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        .badge-priority-2 {
+            background-color: #fd7e14;
+            color: white;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        .badge-priority-3 {
+            background-color: #0dcaf0;
+            color: #000;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .table-custom th {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR PRINCIPAL -->
+<nav class="navbar navbar-dark hospital-navbar sticky-top py-2">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand hospital-brand d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-hospital fs-3 text-info"></i>
+            <span>HOSPITAL SAN MARCOS</span>
+        </a>
+    </div>
+</nav>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- RESUMEN DE ESTADÍSTICAS EN VIVO -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-bold">PACIENTES ADMITIDOS</h6>
+                        <h4 class="fw-bold mb-0 text-dark" id="statPacientes">--</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-bold">EN SALA DE ESPERA</h6>
+                        <h4 class="fw-bold mb-0 text-dark" id="statEspera">--</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-bold">PRIORIDAD 1 (EMERGENCIA)</h6>
+                        <h4 class="fw-bold mb-0 text-dark" id="statPrioridad1">--</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-bold">ALTAS PROCESADAS</h6>
+                        <h4 class="fw-bold mb-0 text-dark" id="statAltas">--</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <ul class="nav nav-pills nav-pills-custom mb-4" id="mainTabs">
+        <li class="nav-item">
+            <button class="nav-link active d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#pacienteTab">
+                <i class="bi bi-person-plus-fill"></i> 1. Registro Paciente
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#admisionTab">
+                <i class="bi bi-card-heading"></i> 2. Admisión
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#triajeTab">
+                <i class="bi bi-activity"></i> 3. Triaje Médico
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#esperaTab" onclick="cargarSalaEspera()">
+                <i class="bi bi-display-fill"></i> 4. Sala de Espera
+            </button>
+        </li>
+    </ul>
+
+    <!-- CONTENIDO DE PESTAÑAS -->
+    <div class="tab-content">
+
+        <!-- 1. REGISTRO DE PACIENTE -->
+        <div class="tab-pane fade show active" id="pacienteTab">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge fs-4 text-primary"></i>
+                    <h5 class="mb-0 fw-bold">Ficha de Filiación del Paciente</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formPaciente" onsubmit="registrarPaciente(event)">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">DNI / Documento</label>
+                                <input type="text" id="pacDni" class="form-control" placeholder="Ej: 72839401" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nombres</label>
+                                <input type="text" id="pacNombres" class="form-control" placeholder="Ej: Karla" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Apellidos</label>
+                                <input type="text" id="pacApellidos" class="form-control" placeholder="Ej: Chávez Lazo" required>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" id="pacNoIdentificado" class="form-check-input">
+                                    <label class="form-check-label fw-semibold text-muted">Marcar si es Paciente No Identificado (NN / Emergencia Sin Documento)</label>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                                    <i class="bi bi-save me-1"></i> Guardar Paciente
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="resPaciente" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. REGISTRO DE ADMISIÓN -->
+        <div class="tab-pane fade" id="admisionTab">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-medical fs-4 text-primary"></i>
+                    <h5 class="mb-0 fw-bold">Apertura de Admisión Emergencia</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formAdmision" onsubmit="registrarAdmision(event)">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">ID del Paciente</label>
+                                <input type="number" id="admPacienteId" class="form-control" placeholder="Ej: 1" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tipo de Atención</label>
+                                <select id="admTipo" class="form-select">
+                                    <option value="Emergencia">Emergencia</option>
+                                    <option value="Ambulatoria">Ambulatoria</option>
+                                    <option value="Hospitalización">Hospitalización</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Servicio Destino</label>
+                                <input type="text" id="admServicio" class="form-control" value="Emergencia General" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Especialidad</label>
+                                <input type="text" id="admEspecialidad" class="form-control" value="Medicina Interna" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Médico Responsable</label>
+                                <input type="text" id="admMedico" class="form-control" placeholder="Ej: Dr. Carlos Mendoza" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Usuario de Admisión</label>
+                                <input type="text" id="admUsuario" class="form-control" value="admin_admision" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Motivo de Consulta / Ingreso</label>
+                                <textarea id="admMotivo" class="form-control" rows="2" placeholder="Describa el motivo principal del ingreso..." required></textarea>
+                            </div>
+
+                            <div class="col-12"><hr class="my-3 text-muted"></div>
+
+                            <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-person-heart me-1"></i> Datos del Acompañante (Opcional)</h6>
+                            <div class="col-md-3">
+                                <label class="form-label">Nombre Completo</label>
+                                <input type="text" id="acompNombre" class="form-control" placeholder="Ej: Carlos Torres">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Documento</label>
+                                <input type="text" id="acompDoc" class="form-control" placeholder="DNI Acompañante">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Parentesco</label>
+                                <input type="text" id="acompParentesco" class="form-control" placeholder="Ej: Esposo">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Teléfono Contacto</label>
+                                <input type="text" id="acompTel" class="form-control" placeholder="987654321">
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-success px-4 py-2 fw-semibold">
+                                    <i class="bi bi-check-circle me-1"></i> Registrar Admisión
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="resAdmision" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. REGISTRO DE TRIAJE -->
+        <div class="tab-pane fade" id="triajeTab">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-heart-pulse fs-4 text-danger"></i>
+                    <h5 class="mb-0 fw-bold">Evaluación y Clasificación de Triaje</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formTriaje" onsubmit="registrarTriaje(event)">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">ID Admisión</label>
+                                <input type="number" id="triAdmisionId" class="form-control" placeholder="Ej: 1" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Presión Arterial</label>
+                                <input type="text" id="triPA" class="form-control" placeholder="120/80" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">FC (LPM)</label>
+                                <input type="number" id="triFC" class="form-control" placeholder="80" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Temp (°C)</label>
+                                <input type="number" step="0.1" id="triTemp" class="form-control" placeholder="36.5" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Saturación (%)</label>
+                                <input type="number" id="triSat" class="form-control" placeholder="98" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prioridad Regulada</label>
+                                <select id="triPrioridad" class="form-select">
+                                    <option value="PRIORIDAD 1 - EMERGENCIA">PRIORIDAD 1 - EMERGENCIA (Atención Inmediata)</option>
+                                    <option value="PRIORIDAD 2 - URGENTE">PRIORIDAD 2 - URGENTE (Atención &lt; 30 min)</option>
+                                    <option value="PRIORIDAD 3 - URGENCIA MENOR">PRIORIDAD 3 - URGENCIA MENOR</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Enfermero Evaluador</label>
+                                <input type="text" id="triEnfermero" class="form-control" placeholder="Lic. Roberto Gómez" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Observaciones Clinicas</label>
+                                <textarea id="triObs" class="form-control" rows="2" placeholder="Hallazgos relevantes del examen de triaje..."></textarea>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-warning text-dark px-4 py-2 fw-semibold">
+                                    <i class="bi bi-file-earmark-check me-1"></i> Registrar Triaje
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="resTriaje" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SALA DE ESPERA (MONITOR CENTRAL) -->
+        <div class="tab-pane fade" id="esperaTab">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-tv fs-4 text-primary"></i>
+                        <h5 class="mb-0 fw-bold">Monitor de Sala de Espera y Triaje</h5>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" onclick="cargarSalaEspera()">
+                        <i class="bi bi-arrow-clockwise"></i> Refrescar Panel
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 table-custom">
+                            <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">CÓDIGO ADMISIÓN</th>
+                                <th>PACIENTE</th>
+                                <th>SERVICIO / ESPECIALIDAD</th>
+                                <th>MÉDICO EN CARGO</th>
+                                <th>NIVEL TRIAJE</th>
+                                <th>HORA INGRESO</th>
+                                <th>ESTADO</th>
+                                <th class="pe-4 text-center">ACCIÓN</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tablaSalaEspera">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2"></div> Cargando monitor de sala...
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL PARA DAR ALTA RÁPIDA -->
+<div class="modal fade" id="modalAltaRapida" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-right me-2"></i> Procesar Alta Médica</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formModalAlta" onsubmit="guardarAltaModal(event)">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="modalAdmisionId">
+                    <div class="alert alert-light border d-flex align-items-center justify-content-between mb-3 py-2 px-3">
+                        <span class="text-muted small fw-bold">CÓDIGO ADMISIÓN:</span>
+                        <code class="fs-6 fw-bold text-primary" id="modalCodigoTexto">---</code>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Alta</label>
+                        <select id="modalTipoAlta" class="form-select">
+                            <option value="ALTA_MEDICA">Alta Médica Curativa</option>
+                            <option value="VOLUNTARIA">Alta Voluntaria</option>
+                            <option value="TRANSFERENCIA">Transferencia / Traslado</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Diagnóstico de Salida</label>
+                        <input type="text" id="modalDiagnostico" class="form-control" placeholder="Ej: Curación completa / Alta por mejoría" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones / Prescripción</label>
+                        <textarea id="modalObs" class="form-control" rows="2" placeholder="Recomendaciones para el paciente..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger fw-semibold px-4"><i class="bi bi-check-lg me-1"></i> Confirmar y Dar Alta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const API_URL = 'http://localhost:8081/api';
+    let bsModalAlta = null;
+    let contadorAltasTotal = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarSalaEspera();
+        bsModalAlta = new bootstrap.Modal(document.getElementById('modalAltaRapida'));
+    });
+
+    // 1. Registrar Paciente
+    async function registrarPaciente(e) {
+        e.preventDefault();
+        const payload = {
+            dni: document.getElementById('pacDni').value,
+            nombres: document.getElementById('pacNombres').value,
+            apellidos: document.getElementById('pacApellidos').value,
+            esNoIdentificado: document.getElementById('pacNoIdentificado').checked
+        };
+        const res = await fetch(`${API_URL}/pacientes`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const div = document.getElementById('resPaciente');
+        if(res.ok) {
+            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Paciente registrado con éxito. ID Asignado: <strong>${data.id}</strong></div>`;
+            document.getElementById('formPaciente').reset();
+            cargarSalaEspera();
+        } else {
+            div.innerHTML = `<div class="alert alert-danger">Error al registrar paciente en la base de datos.</div>`;
+        }
+    }
+
+    // 2. Registrar Admisión
+    async function registrarAdmision(e) {
+        e.preventDefault();
+        const payload = {
+            pacienteId: Number(document.getElementById('admPacienteId').value),
+            tipoAtencion: document.getElementById('admTipo').value,
+            servicio: document.getElementById('admServicio').value,
+            especialidad: document.getElementById('admEspecialidad').value,
+            medicoResponsable: document.getElementById('admMedico').value,
+            motivo: document.getElementById('admMotivo').value,
+            usuarioRegistro: document.getElementById('admUsuario').value
+        };
+
+        const acomp = document.getElementById('acompNombre').value;
+        if(acomp) {
+            payload.acompanante = {
+                nombreCompleto: acomp,
+                documento: document.getElementById('acompDoc').value,
+                parentesco: document.getElementById('acompParentesco').value,
+                telefono: document.getElementById('acompTel').value
+            };
+        }
+
+        const res = await fetch(`${API_URL}/admisiones`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const div = document.getElementById('resAdmision');
+        if(res.ok) {
+            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Admisión aperturada. Código: <strong>${data.codigoAdmision}</strong></div>`;
+            document.getElementById('formAdmision').reset();
+            cargarSalaEspera();
+        } else {
+            div.innerHTML = `<div class="alert alert-danger">Error al aperturar admisión. Verifique que el ID del paciente exista.</div>`;
+        }
+    }
+
+    // 3. Registrar Triaje
+    async function registrarTriaje(e) {
+        e.preventDefault();
+        const payload = {
+            admisionId: Number(document.getElementById('triAdmisionId').value),
+            presionArterial: document.getElementById('triPA').value,
+            frecuenciaCardiaca: Number(document.getElementById('triFC').value),
+            temperatura: Number(document.getElementById('triTemp').value),
+            saturacion: Number(document.getElementById('triSat').value),
+            prioridad: document.getElementById('triPrioridad').value,
+            observaciones: document.getElementById('triObs').value,
+            enfermeroResponsable: document.getElementById('triEnfermero').value
+        };
+
+        const res = await fetch(`${API_URL}/admisiones/triaje`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const div = document.getElementById('resTriaje');
+        if(res.ok) {
+            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Evaluación de triaje registrada de forma correcta.</div>`;
+            document.getElementById('formTriaje').reset();
+            cargarSalaEspera();
+        } else {
+            div.innerHTML = `<div class="alert alert-danger">Error al procesar el triaje.</div>`;
+        }
+    }
+
+    // 4. Cargar Sala de Espera
+    async function cargarSalaEspera() {
+        const tbody = document.getElementById('tablaSalaEspera');
+        try {
+            const res = await fetch(`${API_URL}/admisiones/sala-espera`);
+            const data = await res.json();
+
+            // Actualizar métricas del dashboard
+            document.getElementById('statPacientes').innerText = data.length;
+            document.getElementById('statEspera').innerText = data.filter(i => i.estado === 'ABIERTA').length;
+            document.getElementById('statPrioridad1').innerText = data.filter(i => i.prioridad && i.prioridad.includes('PRIORIDAD 1')).length;
+            document.getElementById('statAltas').innerText = contadorAltasTotal;
+
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No existen admisiones activas en la sala de espera.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => {
+                let badgeClass = 'bg-secondary';
+                if(item.prioridad) {
+                    if(item.prioridad.includes('1')) badgeClass = 'badge-priority-1';
+                    else if(item.prioridad.includes('2')) badgeClass = 'badge-priority-2';
+                    else if(item.prioridad.includes('3')) badgeClass = 'badge-priority-3';
+                }
+
+                const textoEstado = item.estado || 'ABIERTA';
+
+                return `
+                <tr>
+                    <td class="ps-4"><code class="fw-bold text-primary fs-6">${item.codigoAdmision}</code></td>
+                    <td><span class="fw-semibold">Paciente #${item.pacienteId}</span></td>
+                    <td>${item.servicio} <br><small class="text-muted">${item.especialidad}</small></td>
+                    <td><i class="bi bi-person-heart text-secondary me-1"></i>${item.medicoResponsable}</td>
+                    <td><span class="${badgeClass}">${item.prioridad || 'PENDIENTE TRIAJE'}</span></td>
+                    <td><small class="text-muted"><i class="bi bi-clock me-1"></i>${item.fechaIngreso} ${item.horaIngreso}</small></td>
+                    <td>
+                        <span class="badge bg-success text-white fw-bold px-3 py-2 fs-7">${textoEstado}</span>
+                    </td>
+                    <td class="pe-4 text-center">
+                        <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 mx-auto fw-semibold" onclick="abrirModalAlta(${item.id}, '${item.codigoAdmision}')">
+                            <i class="bi bi-box-arrow-right"></i> Dar Alta
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        } catch(err) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">Error al conectar con la API backend.</td></tr>`;
+        }
+    }
+
+    // Abrir ventana modal para dar alta rápida
+    function abrirModalAlta(idAdmision, codigoAdmision) {
+        document.getElementById('modalAdmisionId').value = idAdmision;
+        document.getElementById('modalCodigoTexto').innerText = codigoAdmision;
+        document.getElementById('modalDiagnostico').value = '';
+        document.getElementById('modalObs').value = '';
+        bsModalAlta.show();
+    }
+
+    // Guardar el Alta desde la Ventana Modal
+    async function guardarAltaModal(e) {
+        e.preventDefault();
+        const payload = {
+            admisionId: Number(document.getElementById('modalAdmisionId').value),
+            tipoAlta: document.getElementById('modalTipoAlta').value,
+            diagnosticoSalida: document.getElementById('modalDiagnostico').value,
+            observaciones: document.getElementById('modalObs').value,
+            usuarioRegistro: 'medico_guardia'
+        };
+
+        const res = await fetch(`${API_URL}/admisiones/alta`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+
+        if(res.ok) {
+            bsModalAlta.hide();
+            contadorAltasTotal++;
+            cargarSalaEspera();
+        } else {
+            alert('Error al procesar el alta médica.');
+        }
+    }
+</script>
+
+</body>
+</html>
