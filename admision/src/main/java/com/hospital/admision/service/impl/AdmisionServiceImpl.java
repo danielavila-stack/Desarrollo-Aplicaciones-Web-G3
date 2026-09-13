@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class AdmisionServiceImpl implements AdmisionService {
         Admision admision = new Admision();
         admision.setCodigoAdmision("ADM-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase());
         admision.setFechaIngreso(LocalDate.now());
-        admision.setHoraIngreso(LocalTime.now());
+        admision.setHoraIngreso(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         admision.setTipoAtencion(admisionDTO.getTipoAtencion());
         admision.setServicio(admisionDTO.getServicio());
         admision.setEspecialidad(admisionDTO.getEspecialidad());
@@ -114,8 +115,14 @@ public class AdmisionServiceImpl implements AdmisionService {
         Admision admision = admisionRepository.findById(altaDTO.getAdmisionId())
                 .orElseThrow(() -> new RuntimeException("Admisión no encontrada con ID: " + altaDTO.getAdmisionId()));
 
-        // Actualizar el estado a CERRADA al finalizar la atención
+        // 1. Actualizar el estado a CERRADA
         admision.setEstado("CERRADA");
+
+        // 2. REGISTRAR LA FECHA Y HORA ACTUAL DE SALIDA
+        admision.setFechaSalida(LocalDate.now());
+        admision.setHoraSalida(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+        // 3. Guardar cambios en la base de datos
         Admision actualizada = admisionRepository.save(admision);
 
         return mapearAAdmisionDTO(actualizada);
@@ -154,6 +161,11 @@ public class AdmisionServiceImpl implements AdmisionService {
         dto.setUsuarioRegistro(admision.getUsuarioRegistro());
         dto.setFechaIngreso(admision.getFechaIngreso());
         dto.setHoraIngreso(admision.getHoraIngreso());
+
+        // MAPEAR FECHA Y HORA DE SALIDA AL DTO
+        dto.setFechaSalida(admision.getFechaSalida());
+        dto.setHoraSalida(admision.getHoraSalida());
+
         return dto;
     }
 }

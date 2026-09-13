@@ -202,7 +202,7 @@
                     </div>
                     <div>
                         <h6 class="text-muted mb-0 small fw-bold">ALTAS PROCESADAS</h6>
-                        <h4 class="fw-bold mb-0 text-dark" id="statAltas">--</h4>
+                        <h4 class="fw-bold mb-0 text-dark" id="statAltas">0</h4>
                     </div>
                 </div>
             </div>
@@ -502,7 +502,9 @@
 <script>
     const API_URL = 'http://localhost:8081/api';
     let bsModalAlta = null;
-    let contadorAltasTotal = 0;
+
+    // Obtener las altas acumuladas del almacenamiento local
+    let contadorAltasTotal = parseInt(localStorage.getItem('altasProcesadas') || '0');
 
     document.addEventListener('DOMContentLoaded', () => {
         cargarSalaEspera();
@@ -682,7 +684,9 @@
 
         if(res.ok) {
             bsModalAlta.hide();
+            // Incrementar contador y persistirlo localmente
             contadorAltasTotal++;
+            localStorage.setItem('altasProcesadas', contadorAltasTotal.toString());
             cargarSalaEspera();
         } else {
             alert('Error al procesar el alta médica.');

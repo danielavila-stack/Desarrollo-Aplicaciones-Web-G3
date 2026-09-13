@@ -19,6 +19,8 @@ public class AdmisionDTO {
     private AcompananteDTO acompanante;
     private LocalDate fechaIngreso;
     private LocalTime horaIngreso;
+    private LocalDate fechaSalida;
+    private LocalTime horaSalida;
 
     public AdmisionDTO() {}
 
@@ -51,4 +53,8 @@ public class AdmisionDTO {
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
     public LocalTime getHoraIngreso() { return horaIngreso; }
     public void setHoraIngreso(LocalTime horaIngreso) { this.horaIngreso = horaIngreso; }
+    public LocalDate getFechaSalida() { return fechaSalida; }
+    public void setFechaSalida(LocalDate fechaSalida) { this.fechaSalida = fechaSalida; }
+    public LocalTime getHoraSalida() { return horaSalida; }
+    public void setHoraSalida(LocalTime horaSalida) { this.horaSalida = horaSalida; }
 }

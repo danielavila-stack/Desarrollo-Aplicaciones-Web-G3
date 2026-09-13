@@ -21,6 +21,12 @@ public class Admision {
     @Column(name = "hora_ingreso", nullable = false)
     private LocalTime horaIngreso;
 
+    @Column(name = "fecha_salida")
+    private LocalDate fechaSalida;
+
+    @Column(name = "hora_salida")
+    private LocalTime horaSalida;
+
     @Column(name = "tipo_atencion", nullable = false, length = 50)
     private String tipoAtencion;
 
@@ -72,6 +78,12 @@ public class Admision {
 
     public LocalTime getHoraIngreso() { return horaIngreso; }
     public void setHoraIngreso(LocalTime horaIngreso) { this.horaIngreso = horaIngreso; }
+
+    public LocalDate getFechaSalida() { return fechaSalida; }
+    public void setFechaSalida(LocalDate fechaSalida) { this.fechaSalida = fechaSalida; }
+
+    public LocalTime getHoraSalida() { return horaSalida; }
+    public void setHoraSalida(LocalTime horaSalida) { this.horaSalida = horaSalida; }
 
     public String getTipoAtencion() { return tipoAtencion; }
     public void setTipoAtencion(String tipoAtencion) { this.tipoAtencion = tipoAtencion; }
