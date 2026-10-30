@@ -38,6 +38,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
+		<!-- EVA 02 - P5: Spring Security (login y control de acceso por rol) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!-- EVA 02 - P2: AOP para la auditoría automática -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aspectj</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.mysql</groupId>

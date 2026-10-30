@@ -17,4 +17,8 @@ public interface AdmisionService {
     List<AdmisionDTO> obtenerPacientesEnEspera();
 
     AdmisionDTO buscarPorCodigo(String codigo);
+
+    List<AdmisionDTO> listarPorPaciente(Long pacienteId);
+
+    void eliminarAdmision(Long id);
 }

@@ -8,6 +8,7 @@ public class AdmisionDTO {
     private Long id;
     private String codigoAdmision;
     private Long pacienteId;
+    private String pacienteNombre;
     private String tipoAtencion; // Ambulatoria, Emergencia, Hospitalizacion, Referencia
     private String servicio;
     private String especialidad;
@@ -31,6 +32,8 @@ public class AdmisionDTO {
     public void setCodigoAdmision(String codigoAdmision) { this.codigoAdmision = codigoAdmision; }
     public Long getPacienteId() { return pacienteId; }
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
+    public String getPacienteNombre() { return pacienteNombre; }
+    public void setPacienteNombre(String pacienteNombre) { this.pacienteNombre = pacienteNombre; }
     public String getTipoAtencion() { return tipoAtencion; }
     public void setTipoAtencion(String tipoAtencion) { this.tipoAtencion = tipoAtencion; }
     public String getServicio() { return servicio; }

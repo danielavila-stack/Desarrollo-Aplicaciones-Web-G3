@@ -18,4 +18,7 @@ public interface AdmisionRepository extends JpaRepository<Admision, Long> {
 
     // Listar todas las admisiones en un estado específico
     List<Admision> findByEstado(String estado);
+
+    // Relación N:1 -> todas las admisiones de un paciente (usa la FK paciente_id)
+    List<Admision> findByPacienteIdOrderByFechaIngresoDesc(Long pacienteId);
 }

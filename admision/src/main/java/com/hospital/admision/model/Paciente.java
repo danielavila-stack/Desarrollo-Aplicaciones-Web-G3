@@ -1,5 +1,6 @@
 package com.hospital.admision.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -25,7 +26,9 @@ public class Paciente {
 
 
     // Relación 1:N -> Un paciente puede tener múltiples admisiones
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    // @JsonIgnore evita el ciclo Paciente -> Admision -> Paciente al convertir a JSON
+    @JsonIgnore
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Admision> admisiones;
 
     public Paciente() {}

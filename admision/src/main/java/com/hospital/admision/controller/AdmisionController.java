@@ -60,4 +60,12 @@ public class AdmisionController {
         AdmisionDTO admision = admisionService.buscarPorCodigo(codigo);
         return ResponseEntity.ok(admision);
     }
+
+    // 6. Eliminar una admisión (se eliminan en cascada su acompañante y triaje)
+    // DELETE: http://localhost:8081/api/admisiones/1
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarAdmision(@PathVariable Long id) {
+        admisionService.eliminarAdmision(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.hospital.admision.service.impl;
 
+import com.hospital.admision.auditoria.Auditable;
 import com.hospital.admision.model.Acompanante;
 import com.hospital.admision.model.Admision;
 import com.hospital.admision.model.Paciente;
@@ -12,6 +13,7 @@ import com.hospital.admision.repository.AdmisionRepository;
 import com.hospital.admision.repository.PacienteRepository;
 import com.hospital.admision.repository.TriajeRepository;
 import com.hospital.admision.service.AdmisionService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class AdmisionServiceImpl implements AdmisionService {
 
     @Override
     @Transactional
+    @Auditable(operacion = "REGISTRO", entidad = "Admision")
     public AdmisionDTO registrarAdmision(AdmisionDTO admisionDTO) {
         // 1. Validar y obtener el paciente
         Paciente paciente = pacienteRepository.findById(admisionDTO.getPacienteId())
@@ -58,7 +61,8 @@ public class AdmisionServiceImpl implements AdmisionService {
         admision.setMotivo(admisionDTO.getMotivo());
         admision.setPrioridad("PENDIENTE");
         admision.setEstado("ABIERTA");
-        admision.setUsuarioRegistro(admisionDTO.getUsuarioRegistro());
+        // El usuario de registro es el que inició sesión (Spring Security)
+        admision.setUsuarioRegistro(SecurityContextHolder.getContext().getAuthentication().getName());
         admision.setPaciente(paciente);
 
         // 3. Procesar datos del acompañante si existen
@@ -79,10 +83,16 @@ public class AdmisionServiceImpl implements AdmisionService {
 
     @Override
     @Transactional
+    @Auditable(operacion = "REGISTRO", entidad = "Triaje")
     public TriajeDTO registrarTriaje(TriajeDTO triajeDTO) {
         // 1. Obtener la admisión correspondiente
         Admision admision = admisionRepository.findById(triajeDTO.getAdmisionId())
                 .orElseThrow(() -> new RuntimeException("Admisión no encontrada con ID: " + triajeDTO.getAdmisionId()));
+
+        // Relación 1:1 -> una admisión solo puede tener un triaje
+        if (triajeRepository.findByAdmisionId(admision.getId()).isPresent()) {
+            throw new RuntimeException("La admisión " + admision.getCodigoAdmision() + " ya tiene un triaje registrado.");
+        }
 
         // 2. Crear entidad Triaje
         Triaje triaje = new Triaje();
@@ -111,6 +121,7 @@ public class AdmisionServiceImpl implements AdmisionService {
 
     @Override
     @Transactional
+    @Auditable(operacion = "MODIFICACION", entidad = "Admision")
     public AdmisionDTO procesarAlta(AltaDTO altaDTO) {
         Admision admision = admisionRepository.findById(altaDTO.getAdmisionId())
                 .orElseThrow(() -> new RuntimeException("Admisión no encontrada con ID: " + altaDTO.getAdmisionId()));
@@ -145,12 +156,37 @@ public class AdmisionServiceImpl implements AdmisionService {
         return mapearAAdmisionDTO(admision);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdmisionDTO> listarPorPaciente(Long pacienteId) {
+        if (!pacienteRepository.existsById(pacienteId)) {
+            throw new RuntimeException("Paciente no encontrado con ID: " + pacienteId);
+        }
+        return admisionRepository.findByPacienteIdOrderByFechaIngresoDesc(pacienteId)
+                .stream()
+                .map(this::mapearAAdmisionDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    @Auditable(operacion = "ELIMINACION", entidad = "Admision")
+    public void eliminarAdmision(Long id) {
+        Admision admision = admisionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admisión no encontrada con ID: " + id));
+
+        // Se quita de la lista del paciente; CascadeType.ALL elimina su acompañante y triaje
+        admision.getPaciente().getAdmisiones().remove(admision);
+        admisionRepository.delete(admision);
+    }
+
     // Método auxiliar para transformar Entidad -> DTO
     private AdmisionDTO mapearAAdmisionDTO(Admision admision) {
         AdmisionDTO dto = new AdmisionDTO();
         dto.setId(admision.getId());
         dto.setCodigoAdmision(admision.getCodigoAdmision());
         dto.setPacienteId(admision.getPaciente().getId());
+        dto.setPacienteNombre(admision.getPaciente().getNombres() + " " + admision.getPaciente().getApellidos());
         dto.setTipoAtencion(admision.getTipoAtencion());
         dto.setServicio(admision.getServicio());
         dto.setEspecialidad(admision.getEspecialidad());

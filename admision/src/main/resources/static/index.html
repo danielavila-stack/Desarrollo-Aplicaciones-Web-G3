@@ -11,147 +11,26 @@
     <!-- Google Font - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --hosp-primary: #0f4c81;
-            --hosp-secondary: #2a6f97;
-            --hosp-accent: #00a896;
-            --hosp-bg: #f4f7f9;
-            --hosp-card-bg: #ffffff;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--hosp-bg);
-            color: #333;
-        }
-
-        /* Navbar estilo hospitalario */
-        .hospital-navbar {
-            background: linear-gradient(135deg, #0f4c81 0%, #1b4965 100%);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .hospital-brand {
-            font-weight: 700;
-            font-size: 1.35rem;
-            letter-spacing: -0.5px;
-        }
-
-        /* Tarjetas de Métricas Rápidas */
-        .stat-card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-            transition: transform 0.2s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-        }
-
-        /* Nav Tabs personalizadas */
-        .nav-pills-custom .nav-link {
-            color: #555;
-            font-weight: 500;
-            border-radius: 10px;
-            padding: 10px 18px;
-            margin-right: 6px;
-            background-color: #e9ecef;
-            transition: all 0.25s ease;
-        }
-        .nav-pills-custom .nav-link:hover {
-            background-color: #dee2e6;
-            color: var(--hosp-primary);
-        }
-        .nav-pills-custom .nav-link.active {
-            background-color: var(--hosp-primary) !important;
-            color: #fff !important;
-            box-shadow: 0 4px 10px rgba(15, 76, 129, 0.3);
-        }
-
-        /* Formularios y Tarjetas */
-        .main-card {
-            border: none;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        .card-header-custom {
-            background-color: transparent;
-            border-bottom: 2px solid #f0f3f6;
-            padding: 18px 24px;
-        }
-        .form-label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #495057;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 10px 14px;
-            border: 1px solid #ced4da;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--hosp-secondary);
-            box-shadow: 0 0 0 0.25rem rgba(42, 111, 151, 0.15);
-        }
-
-        /* Badges de Triaje */
-        .badge-priority-1 {
-            background-color: #dc3545;
-            color: white;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        .badge-priority-2 {
-            background-color: #fd7e14;
-            color: white;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        .badge-priority-3 {
-            background-color: #0dcaf0;
-            color: #000;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-
-        .table-custom th {
-            font-weight: 600;
-            color: #6c757d;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e9ecef;
-        }
-    </style>
+    <!-- Estilos compartidos (EVA 02) -->
+    <link href="/css/hospital.css" rel="stylesheet">
 </head>
 <body>
 
 <!-- NAVBAR PRINCIPAL -->
-<nav class="navbar navbar-dark hospital-navbar sticky-top py-2">
-    <div class="container-fluid px-4">
-        <a class="navbar-brand hospital-brand d-flex align-items-center gap-2" href="#">
+<nav class="navbar navbar-expand navbar-dark hospital-navbar sticky-top py-2">
+    <div class="container-fluid px-4 flex-wrap gap-2">
+        <a class="navbar-brand hospital-brand d-flex align-items-center gap-2" href="/index.html">
             <i class="bi bi-hospital fs-3 text-info"></i>
             <span>HOSPITAL SAN MARCOS</span>
         </a>
+        <!-- Menú y usuario autenticado: lo arma js/sesion.js según el rol -->
+        <div id="navbarSesion" class="d-flex flex-grow-1 flex-wrap align-items-center justify-content-between gap-2"></div>
     </div>
 </nav>
 
 <div class="container-fluid px-4 py-4">
+
+    <div id="resGeneral"></div>
 
     <!-- RESUMEN DE ESTADÍSTICAS EN VIVO -->
     <div class="row g-3 mb-4">
@@ -211,17 +90,17 @@
 
     <!-- PESTAÑAS DE NAVEGACIÓN -->
     <ul class="nav nav-pills nav-pills-custom mb-4" id="mainTabs">
-        <li class="nav-item">
-            <button class="nav-link active d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#pacienteTab">
+        <li class="nav-item" data-roles="ADMINISTRADOR,RECEPCIONISTA">
+            <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#pacienteTab">
                 <i class="bi bi-person-plus-fill"></i> 1. Registro Paciente
             </button>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" data-roles="ADMINISTRADOR,RECEPCIONISTA">
             <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#admisionTab">
                 <i class="bi bi-card-heading"></i> 2. Admisión
             </button>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" data-roles="ADMINISTRADOR,MEDICO">
             <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#triajeTab">
                 <i class="bi bi-activity"></i> 3. Triaje Médico
             </button>
@@ -231,13 +110,18 @@
                 <i class="bi bi-display-fill"></i> 4. Sala de Espera
             </button>
         </li>
+        <li class="nav-item">
+            <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#listaPacientesTab" onclick="cargarPacientes()">
+                <i class="bi bi-person-lines-fill"></i> 5. Pacientes
+            </button>
+        </li>
     </ul>
 
     <!-- CONTENIDO DE PESTAÑAS -->
     <div class="tab-content">
 
         <!-- 1. REGISTRO DE PACIENTE -->
-        <div class="tab-pane fade show active" id="pacienteTab">
+        <div class="tab-pane fade" id="pacienteTab" data-roles="ADMINISTRADOR,RECEPCIONISTA">
             <div class="card main-card">
                 <div class="card-header-custom d-flex align-items-center gap-2">
                     <i class="bi bi-person-badge fs-4 text-primary"></i>
@@ -277,7 +161,7 @@
         </div>
 
         <!-- 2. REGISTRO DE ADMISIÓN -->
-        <div class="tab-pane fade" id="admisionTab">
+        <div class="tab-pane fade" id="admisionTab" data-roles="ADMINISTRADOR,RECEPCIONISTA">
             <div class="card main-card">
                 <div class="card-header-custom d-flex align-items-center gap-2">
                     <i class="bi bi-file-earmark-medical fs-4 text-primary"></i>
@@ -312,7 +196,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Usuario de Admisión</label>
-                                <input type="text" id="admUsuario" class="form-control" value="admin_admision" required>
+                                <input type="text" id="admUsuario" class="form-control bg-light" readonly title="Se toma del usuario que inició sesión">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Motivo de Consulta / Ingreso</label>
@@ -352,7 +236,7 @@
         </div>
 
         <!-- 3. REGISTRO DE TRIAJE -->
-        <div class="tab-pane fade" id="triajeTab">
+        <div class="tab-pane fade" id="triajeTab" data-roles="ADMINISTRADOR,MEDICO">
             <div class="card main-card">
                 <div class="card-header-custom d-flex align-items-center gap-2">
                     <i class="bi bi-heart-pulse fs-4 text-danger"></i>
@@ -449,6 +333,111 @@
             </div>
         </div>
 
+        <!-- 5. LISTADO DE PACIENTES (CRUD + relación 1:N con Admisiones) -->
+        <div class="tab-pane fade" id="listaPacientesTab">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-person-lines-fill fs-4 text-primary"></i>
+                        <h5 class="mb-0 fw-bold">Pacientes Registrados</h5>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" onclick="cargarPacientes()">
+                        <i class="bi bi-arrow-clockwise"></i> Refrescar
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div id="resPacientes" class="px-4 pt-3"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 table-custom">
+                            <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>DNI</th>
+                                <th>NOMBRES Y APELLIDOS</th>
+                                <th>TIPO</th>
+                                <th class="pe-4 text-center">ACCIONES</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tablaPacientes">
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Cargando pacientes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL PARA EDITAR PACIENTE -->
+<div class="modal fade" id="modalEditarPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i> Editar Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form onsubmit="guardarEdicionPaciente(event)">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="ediPacId">
+                    <div class="mb-3">
+                        <label class="form-label">DNI / Documento</label>
+                        <input type="text" id="ediPacDni" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombres</label>
+                        <input type="text" id="ediPacNombres" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Apellidos</label>
+                        <input type="text" id="ediPacApellidos" class="form-control" required>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" id="ediPacNoIdentificado" class="form-check-input">
+                        <label class="form-check-label fw-semibold text-muted">Paciente No Identificado (NN)</label>
+                    </div>
+                    <div id="resEditarPaciente" class="mt-3"></div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary fw-semibold px-4"><i class="bi bi-save me-1"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CON LAS ADMISIONES DE UN PACIENTE (relación 1:N) -->
+<div class="modal fade" id="modalAdmisionesPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-folder2-open me-2"></i> Admisiones de <span id="tituloAdmPaciente"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="resAdmPaciente" class="px-4 pt-3"></div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 table-custom">
+                        <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">CÓDIGO</th>
+                            <th>TIPO / SERVICIO</th>
+                            <th>MÉDICO</th>
+                            <th>PRIORIDAD</th>
+                            <th>INGRESO</th>
+                            <th>SALIDA</th>
+                            <th>ESTADO</th>
+                            <th>REGISTRÓ</th>
+                            <th class="pe-4 text-center">ACCIÓN</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tablaAdmPaciente"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -499,16 +488,41 @@
 <!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Funciones de sesión y control de acceso por rol (EVA 02) -->
+<script src="/js/sesion.js"></script>
+
 <script>
-    const API_URL = 'http://localhost:8081/api';
     let bsModalAlta = null;
+    let bsModalEditar = null;
+    let bsModalAdmisiones = null;
+    let pacientes = [];
 
     // Obtener las altas acumuladas del almacenamiento local
     let contadorAltasTotal = parseInt(localStorage.getItem('altasProcesadas') || '0');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        cargarSalaEspera();
+    document.addEventListener('DOMContentLoaded', async () => {
         bsModalAlta = new bootstrap.Modal(document.getElementById('modalAltaRapida'));
+        bsModalEditar = new bootstrap.Modal(document.getElementById('modalEditarPaciente'));
+        bsModalAdmisiones = new bootstrap.Modal(document.getElementById('modalAdmisionesPaciente'));
+
+        // Sesión: arma el menú y elimina las pestañas que el rol no puede ver
+        const usuario = await iniciarSesion();
+        const campoUsuario = document.getElementById('admUsuario');
+        if (campoUsuario) campoUsuario.value = usuario.username;
+
+        if (new URLSearchParams(window.location.search).has('denegado')) {
+            mostrarAlerta('resGeneral', 'warning', 'No tiene permisos para acceder a esa opción.');
+        }
+
+        // Abre la pestaña indicada en la URL (#triaje, #paciente) o la primera permitida
+        const destino = { '#paciente': '#pacienteTab', '#admision': '#admisionTab', '#triaje': '#triajeTab',
+                          '#espera': '#esperaTab', '#pacientes': '#listaPacientesTab' }[window.location.hash];
+        const boton = document.querySelector(`#mainTabs [data-bs-target="${destino}"]`)
+                   || document.querySelector('#mainTabs [data-bs-target]');
+        bootstrap.Tab.getOrCreateInstance(boton).show();
+
+        cargarSalaEspera();
+        cargarPacientes();
     });
 
     // 1. Registrar Paciente
@@ -520,19 +534,13 @@
             apellidos: document.getElementById('pacApellidos').value,
             esNoIdentificado: document.getElementById('pacNoIdentificado').checked
         };
-        const res = await fetch(`${API_URL}/pacientes`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        const div = document.getElementById('resPaciente');
-        if(res.ok) {
-            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Paciente registrado con éxito. ID Asignado: <strong>${data.id}</strong></div>`;
+        try {
+            const data = await api('/pacientes', { method: 'POST', body: JSON.stringify(payload) });
+            mostrarAlerta('resPaciente', 'success', `Paciente registrado con éxito. ID Asignado: <strong>${data.id}</strong>`);
             document.getElementById('formPaciente').reset();
-            cargarSalaEspera();
-        } else {
-            div.innerHTML = `<div class="alert alert-danger">Error al registrar paciente en la base de datos.</div>`;
+            cargarPacientes();
+        } catch (err) {
+            mostrarAlerta('resPaciente', 'danger', escaparHtml(err.message));
         }
     }
 
@@ -545,8 +553,7 @@
             servicio: document.getElementById('admServicio').value,
             especialidad: document.getElementById('admEspecialidad').value,
             medicoResponsable: document.getElementById('admMedico').value,
-            motivo: document.getElementById('admMotivo').value,
-            usuarioRegistro: document.getElementById('admUsuario').value
+            motivo: document.getElementById('admMotivo').value
         };
 
         const acomp = document.getElementById('acompNombre').value;
@@ -559,19 +566,15 @@
             };
         }
 
-        const res = await fetch(`${API_URL}/admisiones`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        const div = document.getElementById('resAdmision');
-        if(res.ok) {
-            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Admisión aperturada. Código: <strong>${data.codigoAdmision}</strong></div>`;
+        try {
+            const data = await api('/admisiones', { method: 'POST', body: JSON.stringify(payload) });
+            mostrarAlerta('resAdmision', 'success', `Admisión aperturada. Código: <strong>${data.codigoAdmision}</strong> (ID ${data.id}) para ${escaparHtml(data.pacienteNombre)}`);
+            const usuario = document.getElementById('admUsuario').value;
             document.getElementById('formAdmision').reset();
+            document.getElementById('admUsuario').value = usuario;
             cargarSalaEspera();
-        } else {
-            div.innerHTML = `<div class="alert alert-danger">Error al aperturar admisión. Verifique que el ID del paciente exista.</div>`;
+        } catch (err) {
+            mostrarAlerta('resAdmision', 'danger', escaparHtml(err.message));
         }
     }
 
@@ -589,18 +592,13 @@
             enfermeroResponsable: document.getElementById('triEnfermero').value
         };
 
-        const res = await fetch(`${API_URL}/admisiones/triaje`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const div = document.getElementById('resTriaje');
-        if(res.ok) {
-            div.innerHTML = `<div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-5"></i> Evaluación de triaje registrada de forma correcta.</div>`;
+        try {
+            await api('/admisiones/triaje', { method: 'POST', body: JSON.stringify(payload) });
+            mostrarAlerta('resTriaje', 'success', 'Evaluación de triaje registrada de forma correcta.');
             document.getElementById('formTriaje').reset();
             cargarSalaEspera();
-        } else {
-            div.innerHTML = `<div class="alert alert-danger">Error al procesar el triaje.</div>`;
+        } catch (err) {
+            mostrarAlerta('resTriaje', 'danger', escaparHtml(err.message));
         }
     }
 
@@ -608,8 +606,7 @@
     async function cargarSalaEspera() {
         const tbody = document.getElementById('tablaSalaEspera');
         try {
-            const res = await fetch(`${API_URL}/admisiones/sala-espera`);
-            const data = await res.json();
+            const data = await api('/admisiones/sala-espera');
 
             // Actualizar métricas del dashboard
             document.getElementById('statPacientes').innerText = data.length;
@@ -622,6 +619,9 @@
                 return;
             }
 
+            // Solo ADMINISTRADOR y MEDICO pueden dar de alta
+            const puedeDarAlta = tieneRol('ADMINISTRADOR', 'MEDICO');
+
             tbody.innerHTML = data.map(item => {
                 let badgeClass = 'bg-secondary';
                 if(item.prioridad) {
@@ -631,28 +631,29 @@
                 }
 
                 const textoEstado = item.estado || 'ABIERTA';
+                const accion = puedeDarAlta
+                    ? `<button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 mx-auto fw-semibold" onclick="abrirModalAlta(${item.id}, '${item.codigoAdmision}')">
+                            <i class="bi bi-box-arrow-right"></i> Dar Alta
+                       </button>`
+                    : `<small class="text-muted">Sin permiso</small>`;
 
                 return `
                 <tr>
-                    <td class="ps-4"><code class="fw-bold text-primary fs-6">${item.codigoAdmision}</code></td>
-                    <td><span class="fw-semibold">Paciente #${item.pacienteId}</span></td>
-                    <td>${item.servicio} <br><small class="text-muted">${item.especialidad}</small></td>
-                    <td><i class="bi bi-person-heart text-secondary me-1"></i>${item.medicoResponsable}</td>
+                    <td class="ps-4"><code class="fw-bold text-primary fs-6">${item.codigoAdmision}</code><br><small class="text-muted">ID ${item.id}</small></td>
+                    <td><span class="fw-semibold">${escaparHtml(item.pacienteNombre)}</span><br><small class="text-muted">Paciente #${item.pacienteId}</small></td>
+                    <td>${escaparHtml(item.servicio)} <br><small class="text-muted">${escaparHtml(item.especialidad)}</small></td>
+                    <td><i class="bi bi-person-heart text-secondary me-1"></i>${escaparHtml(item.medicoResponsable)}</td>
                     <td><span class="${badgeClass}">${item.prioridad || 'PENDIENTE TRIAJE'}</span></td>
                     <td><small class="text-muted"><i class="bi bi-clock me-1"></i>${item.fechaIngreso} ${item.horaIngreso}</small></td>
                     <td>
                         <span class="badge bg-success text-white fw-bold px-3 py-2 fs-7">${textoEstado}</span>
                     </td>
-                    <td class="pe-4 text-center">
-                        <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 mx-auto fw-semibold" onclick="abrirModalAlta(${item.id}, '${item.codigoAdmision}')">
-                            <i class="bi bi-box-arrow-right"></i> Dar Alta
-                        </button>
-                    </td>
+                    <td class="pe-4 text-center">${accion}</td>
                 </tr>
                 `;
             }).join('');
         } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">Error al conectar con la API backend.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">${escaparHtml(err.message)}</td></tr>`;
         }
     }
 
@@ -673,23 +674,135 @@
             tipoAlta: document.getElementById('modalTipoAlta').value,
             diagnosticoSalida: document.getElementById('modalDiagnostico').value,
             observaciones: document.getElementById('modalObs').value,
-            usuarioRegistro: 'medico_guardia'
+            usuarioRegistro: USUARIO_ACTUAL.username
         };
 
-        const res = await fetch(`${API_URL}/admisiones/alta`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-
-        if(res.ok) {
+        try {
+            await api('/admisiones/alta', { method: 'POST', body: JSON.stringify(payload) });
             bsModalAlta.hide();
             // Incrementar contador y persistirlo localmente
             contadorAltasTotal++;
             localStorage.setItem('altasProcesadas', contadorAltasTotal.toString());
             cargarSalaEspera();
-        } else {
-            alert('Error al procesar el alta médica.');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // 5. Listado de pacientes (CRUD)
+    async function cargarPacientes() {
+        const tbody = document.getElementById('tablaPacientes');
+        try {
+            pacientes = await api('/pacientes');
+            if (pacientes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay pacientes registrados.</td></tr>';
+                return;
+            }
+            // Editar y eliminar solo para ADMINISTRADOR y RECEPCIONISTA
+            const puedeEditar = tieneRol('ADMINISTRADOR', 'RECEPCIONISTA');
+            tbody.innerHTML = pacientes.map(p => `
+                <tr>
+                    <td class="ps-4 fw-semibold">${p.id}</td>
+                    <td><code>${escaparHtml(p.dni)}</code></td>
+                    <td>${escaparHtml(p.nombres)} ${escaparHtml(p.apellidos)}</td>
+                    <td>${p.esNoIdentificado ? '<span class="badge bg-warning text-dark">NN</span>' : '<span class="badge bg-light text-dark border">Identificado</span>'}</td>
+                    <td class="pe-4 text-center text-nowrap">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="verAdmisiones(${p.id})"><i class="bi bi-folder2-open"></i> Admisiones</button>
+                        ${puedeEditar ? `
+                        <button class="btn btn-sm btn-outline-primary" onclick="abrirEditarPaciente(${p.id})"><i class="bi bi-pencil-square"></i> Editar</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarPaciente(${p.id})"><i class="bi bi-trash"></i> Eliminar</button>` : ''}
+                    </td>
+                </tr>`).join('');
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-danger">${escaparHtml(err.message)}</td></tr>`;
+        }
+    }
+
+    function abrirEditarPaciente(id) {
+        const p = pacientes.find(x => x.id === id);
+        document.getElementById('ediPacId').value = p.id;
+        document.getElementById('ediPacDni').value = p.dni;
+        document.getElementById('ediPacNombres').value = p.nombres;
+        document.getElementById('ediPacApellidos').value = p.apellidos;
+        document.getElementById('ediPacNoIdentificado').checked = !!p.esNoIdentificado;
+        document.getElementById('resEditarPaciente').innerHTML = '';
+        bsModalEditar.show();
+    }
+
+    async function guardarEdicionPaciente(e) {
+        e.preventDefault();
+        const id = document.getElementById('ediPacId').value;
+        const payload = {
+            dni: document.getElementById('ediPacDni').value,
+            nombres: document.getElementById('ediPacNombres').value,
+            apellidos: document.getElementById('ediPacApellidos').value,
+            esNoIdentificado: document.getElementById('ediPacNoIdentificado').checked
+        };
+        try {
+            await api(`/pacientes/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            bsModalEditar.hide();
+            mostrarAlerta('resPacientes', 'success', `Paciente #${id} actualizado correctamente.`);
+            cargarPacientes();
+            cargarSalaEspera();
+        } catch (err) {
+            mostrarAlerta('resEditarPaciente', 'danger', escaparHtml(err.message));
+        }
+    }
+
+    async function eliminarPaciente(id) {
+        if (!confirm(`¿Eliminar al paciente #${id}? También se eliminarán sus admisiones, acompañantes y triajes.`)) return;
+        try {
+            await api(`/pacientes/${id}`, { method: 'DELETE' });
+            mostrarAlerta('resPacientes', 'success', `Paciente #${id} eliminado junto con sus registros relacionados.`);
+            cargarPacientes();
+        } catch (err) {
+            mostrarAlerta('resPacientes', 'danger', escaparHtml(err.message));
+        }
+    }
+
+    // Relación 1:N -> admisiones del paciente seleccionado
+    async function verAdmisiones(id) {
+        const p = pacientes.find(x => x.id === id);
+        document.getElementById('tituloAdmPaciente').innerText = `${p.nombres} ${p.apellidos} (#${p.id})`;
+        document.getElementById('resAdmPaciente').innerHTML = '';
+        const tbody = document.getElementById('tablaAdmPaciente');
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Cargando...</td></tr>';
+        bsModalAdmisiones.show();
+        try {
+            const admisiones = await api(`/pacientes/${id}/admisiones`);
+            if (admisiones.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">El paciente no tiene admisiones registradas.</td></tr>';
+                return;
+            }
+            const puedeEliminar = tieneRol('ADMINISTRADOR', 'RECEPCIONISTA');
+            tbody.innerHTML = admisiones.map(a => `
+                <tr>
+                    <td class="ps-4"><code class="fw-bold text-primary">${a.codigoAdmision}</code></td>
+                    <td>${escaparHtml(a.tipoAtencion)}<br><small class="text-muted">${escaparHtml(a.servicio)}</small></td>
+                    <td>${escaparHtml(a.medicoResponsable)}</td>
+                    <td><small>${escaparHtml(a.prioridad)}</small></td>
+                    <td><small>${a.fechaIngreso} ${a.horaIngreso}</small></td>
+                    <td><small>${a.fechaSalida ? a.fechaSalida + ' ' + a.horaSalida : '-'}</small></td>
+                    <td><span class="badge ${a.estado === 'ABIERTA' ? 'bg-success' : 'bg-secondary'}">${a.estado}</span></td>
+                    <td><small>${escaparHtml(a.usuarioRegistro || '-')}</small></td>
+                    <td class="pe-4 text-center">
+                        ${puedeEliminar ? `<button class="btn btn-sm btn-outline-danger" onclick="eliminarAdmision(${a.id}, ${id})"><i class="bi bi-trash"></i></button>` : '-'}
+                    </td>
+                </tr>`).join('');
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger">${escaparHtml(err.message)}</td></tr>`;
+        }
+    }
+
+    async function eliminarAdmision(idAdmision, idPaciente) {
+        if (!confirm(`¿Eliminar la admisión #${idAdmision}? También se eliminarán su acompañante y triaje.`)) return;
+        try {
+            await api(`/admisiones/${idAdmision}`, { method: 'DELETE' });
+            await verAdmisiones(idPaciente);
+            mostrarAlerta('resAdmPaciente', 'success', `Admisión #${idAdmision} eliminada.`);
+            cargarSalaEspera();
+        } catch (err) {
+            mostrarAlerta('resAdmPaciente', 'danger', escaparHtml(err.message));
         }
     }
 </script>
