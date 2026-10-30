@@ -1,0 +1,160 @@
+:root {
+    --hosp-primary: #0f4c81;
+    --hosp-secondary: #2a6f97;
+    --hosp-accent: #00a896;
+    --hosp-bg: #f4f7f9;
+    --hosp-card-bg: #ffffff;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--hosp-bg);
+    color: #333;
+}
+
+/* Navbar estilo hospitalario */
+.hospital-navbar {
+    background: linear-gradient(135deg, #0f4c81 0%, #1b4965 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.5px;
+}
+
+/* Tarjetas de Métricas Rápidas */
+.stat-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+/* Nav Tabs personalizadas */
+.nav-pills-custom .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin-right: 6px;
+    background-color: #e9ecef;
+    transition: all 0.25s ease;
+}
+.nav-pills-custom .nav-link:hover {
+    background-color: #dee2e6;
+    color: var(--hosp-primary);
+}
+.nav-pills-custom .nav-link.active {
+    background-color: var(--hosp-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(15, 76, 129, 0.3);
+}
+
+/* Formularios y Tarjetas */
+.main-card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.card-header-custom {
+    background-color: transparent;
+    border-bottom: 2px solid #f0f3f6;
+    padding: 18px 24px;
+}
+.form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 10px 14px;
+    border: 1px solid #ced4da;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--hosp-secondary);
+    box-shadow: 0 0 0 0.25rem rgba(42, 111, 151, 0.15);
+}
+
+/* Badges de Triaje */
+.badge-priority-1 {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+.badge-priority-2 {
+    background-color: #fd7e14;
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+.badge-priority-3 {
+    background-color: #0dcaf0;
+    color: #000;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.table-custom th {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* ===== EVA 02: estilos compartidos para login, usuarios, roles y auditoría ===== */
+.nav-modulo .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 14px;
+}
+.nav-modulo .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.nav-modulo .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.18);
+}
+.badge-rol {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background-color: #6c757d;
+    color: #fff;
+}
+.rol-ADMINISTRADOR { background-color: #6f42c1; color: #fff; }
+.rol-MEDICO { background-color: #00a896; color: #fff; }
+.rol-RECEPCIONISTA { background-color: #2a6f97; color: #fff; }
+.estado-activo { background-color: #d1e7dd; color: #0f5132; }
+.estado-inactivo { background-color: #f8d7da; color: #842029; }
+.op-REGISTRO { background-color: #d1e7dd; color: #0f5132; }
+.op-MODIFICACION { background-color: #fff3cd; color: #664d03; }
+.op-ELIMINACION { background-color: #f8d7da; color: #842029; }
+.op-CAMBIO_ESTADO { background-color: #cfe2ff; color: #084298; }
+.fila-inactiva td { color: #9aa0a6; }

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles - Hospital San Marcos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/hospital.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand navbar-dark hospital-navbar sticky-top py-2">
+    <div class="container-fluid px-4 flex-wrap gap-2">
+        <a class="navbar-brand hospital-brand d-flex align-items-center gap-2" href="/index.html">
+            <i class="bi bi-hospital fs-3 text-info"></i><span>HOSPITAL SAN MARCOS</span>
+        </a>
+        <div id="navbarSesion" class="d-flex flex-grow-1 flex-wrap align-items-center justify-content-between gap-2"></div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-shield-lock-fill fs-3 text-primary"></i>
+        <div>
+            <h4 class="fw-bold mb-0">Gestión de Roles</h4>
+            <small class="text-muted">Registrar, editar y activar/desactivar los roles de acceso</small>
+        </div>
+    </div>
+
+    <div id="resRol"></div>
+
+    <div class="row g-4">
+        <!-- FORMULARIO DE REGISTRO / EDICIÓN -->
+        <div class="col-lg-4">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-plus-circle fs-4 text-primary" id="iconoForm"></i>
+                    <h5 class="mb-0 fw-bold" id="tituloForm">Registrar Rol</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formRol" onsubmit="guardarRol(event)">
+                        <input type="hidden" id="rolId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Rol</label>
+                            <input type="text" id="rolNombre" class="form-control" placeholder="Ej: ENFERMERO" required>
+                            <small class="text-muted">Se guarda en mayúsculas y sin tildes.</small>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Descripción</label>
+                            <textarea id="rolDescripcion" class="form-control" rows="3" placeholder="Funciones que cumple este rol..."></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                <i class="bi bi-save me-1"></i> Guardar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary d-none" id="btnCancelar" onclick="limpiarFormulario()">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTADO DE ROLES -->
+        <div class="col-lg-8">
+            <div class="card main-card">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-list-ul fs-4 text-primary"></i>
+                        <h5 class="mb-0 fw-bold">Roles Registrados</h5>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="cargarRoles()">
+                        <i class="bi bi-arrow-clockwise"></i> Refrescar
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 table-custom">
+                            <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>ROL</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th class="text-center">USUARIOS</th>
+                                <th>ESTADO</th>
+                                <th class="pe-4 text-center">ACCIONES</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tablaRoles">
+                            <tr><td colspan="6" class="text-center py-4 text-muted">Cargando roles...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/sesion.js"></script>
+<script>
+    let roles = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await iniciarSesion();
+        cargarRoles();
+    });
+
+    async function cargarRoles() {
+        const tbody = document.getElementById('tablaRoles');
+        try {
+            roles = await api('/roles');
+            tbody.innerHTML = roles.map(r => `
+                <tr class="${r.activo ? '' : 'fila-inactiva'}">
+                    <td class="ps-4 fw-semibold">${r.id}</td>
+                    <td><span class="badge-rol rol-${r.nombre}">${escaparHtml(r.nombre)}</span></td>
+                    <td><small>${escaparHtml(r.descripcion || '-')}</small></td>
+                    <td class="text-center"><span class="badge bg-light text-dark border">${r.totalUsuarios}</span></td>
+                    <td><span class="badge ${r.activo ? 'estado-activo' : 'estado-inactivo'} px-3 py-2">${r.activo ? 'ACTIVO' : 'INACTIVO'}</span></td>
+                    <td class="pe-4 text-center text-nowrap">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarRol(${r.id})">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </button>
+                        <button class="btn btn-sm ${r.activo ? 'btn-outline-danger' : 'btn-outline-success'}" onclick="cambiarEstado(${r.id}, ${!r.activo})">
+                            <i class="bi ${r.activo ? 'bi-toggle-off' : 'bi-toggle-on'}"></i> ${r.activo ? 'Desactivar' : 'Activar'}
+                        </button>
+                    </td>
+                </tr>`).join('');
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">${escaparHtml(err.message)}</td></tr>`;
+        }
+    }
+
+    async function guardarRol(e) {
+        e.preventDefault();
+        const id = document.getElementById('rolId').value;
+        const payload = {
+            nombre: document.getElementById('rolNombre').value,
+            descripcion: document.getElementById('rolDescripcion').value
+        };
+        try {
+            if (id) {
+                const r = await api(`/roles/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+                mostrarAlerta('resRol', 'success', `Rol <strong>${escaparHtml(r.nombre)}</strong> actualizado correctamente.`);
+            } else {
+                const r = await api('/roles', { method: 'POST', body: JSON.stringify(payload) });
+                mostrarAlerta('resRol', 'success', `Rol <strong>${escaparHtml(r.nombre)}</strong> registrado con ID ${r.id}.`);
+            }
+            limpiarFormulario();
+            cargarRoles();
+        } catch (err) {
+            mostrarAlerta('resRol', 'danger', escaparHtml(err.message));
+        }
+    }
+
+    function editarRol(id) {
+        const r = roles.find(x => x.id === id);
+        document.getElementById('rolId').value = r.id;
+        document.getElementById('rolNombre').value = r.nombre;
+        document.getElementById('rolDescripcion').value = r.descripcion || '';
+        document.getElementById('tituloForm').innerText = `Editar Rol #${r.id}`;
+        document.getElementById('iconoForm').className = 'bi bi-pencil-square fs-4 text-warning';
+        document.getElementById('btnCancelar').classList.remove('d-none');
+    }
+
+    async function cambiarEstado(id, activo) {
+        try {
+            const r = await api(`/roles/${id}/estado?activo=${activo}`, { method: 'PATCH' });
+            mostrarAlerta('resRol', 'success', `Rol <strong>${escaparHtml(r.nombre)}</strong> ${activo ? 'activado' : 'desactivado'}. ${activo ? '' : 'Sus usuarios ya no podrán iniciar sesión.'}`);
+            cargarRoles();
+        } catch (err) {
+            mostrarAlerta('resRol', 'danger', escaparHtml(err.message));
+        }
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('formRol').reset();
+        document.getElementById('rolId').value = '';
+        document.getElementById('tituloForm').innerText = 'Registrar Rol';
+        document.getElementById('iconoForm').className = 'bi bi-plus-circle fs-4 text-primary';
+        document.getElementById('btnCancelar').classList.add('d-none');
+    }
+</script>
+</body>
+</html>
